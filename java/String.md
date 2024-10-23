@@ -42,9 +42,64 @@ text = text + "world";
 - 두 클래스는 문법이나 배열구성도 모두 같지만 **동기화** 지원의 유무가 다르다.
 
 
+### 밑의 코드는 뭐가 다를까? 
+
+```
+String aa = 'test'
+String aa = new String('test')
+
+```
+- 두방식은 메모리 처리 방식과 성능에 있다 
+
+#### 리터럴 방식
+- 해당 방식은 문자열 상수풀을 이용하여 메모리를 효율적으로 관리. "test"라는 리터럴 문자열이 상수풀에 저장. -> 만약 상수풀에 "test"가 이미 존재한다면 기존 객체를 재사용하고 새로 생성하지않음. 즉 동일한 문자열이 여러번 사용되더라도 상수풀에서 하나의 객체만 생성됨으로 메모리 절약 가능 -> 이것을 **interning**이라고 함.
+
+```
+String aa = "test";
+String bb = "test";
+System.out.println(aa == bb); // true (같은 객체를 가리킴)
+
+```
+- 리터럴 방식으로 String을 선언하면 JVM은 String Pool에 객체를 생성하고 해당 참조를 stack에 저장한다. -> Constant Pool은 문자열이 저장되는 특별한 메모리 영역이다.
+
+### String Constant Pool
+- 자바 7 이상 부터 String Constant Pool은 힙위에 올라가 GC의 영향을 받는다.
+
+![image](https://github.com/user-attachments/assets/c510cb98-c933-4a46-8127-537461616372)
+ 
+```
+String str = "hello"; // String constant pool에 저장
+String str2 = "hello"; // String constant pool에서 재사용
+String str3 = new ("hello"); // 별도의 Heap 메모리에 저장
+
+System.out.println(str == str2);	// true (같은 객체를 재사용하기 때문에)
+System.out.println(str == str3);	// false
+System.out.println(str.equals(str3));	// true
+
+```
+![image](https://github.com/user-attachments/assets/c73806cf-5c8d-488d-965f-606e1a7d35a5)
+
+참고링크 https://deveric.tistory.com/123
+
+#### 객체 생성 방식
+- 명시적으로 새로운 String 객체를 생성함.
+- 상수풀에 저장된 "test"를 사용하더라도 **힙메모리에 새로운 String객체를 생성**
+- 항상 새로운 객체를 생성하여 상수풀에 이미 동일한 문자열이 존재하더라도 이를 무시하고 별도의 객체를 만듬.
+
+```
+String aa = new String("test");
+String bb = new String("test");
+System.out.println(aa == bb); // false (서로 다른 객체)
+
+```
+
+- 리터럴 방식은 메모리를 효율적으로 사용하고 성능이 더 좋음. 상수 풀을 이용해 같은 문자열에 대해 중복 객체를 생성하지 않는다.
+- 객체 생성 방식은 새로운 객체를 무조건 생성하므로 메모리 효율이 떨어지고, 일반적으로 사용하지 않는 방식
 
 ---
 
 참고링크 
 
 https://inpa.tistory.com/entry/JAVA-%E2%98%95-String-StringBuffer-StringBuilder-%EC%B0%A8%EC%9D%B4%EC%A0%90-%EC%84%B1%EB%8A%A5-%EB%B9%84%EA%B5%90
+
+https://velog.io/@paulhana6006/%EC%9E%90%EB%B0%94-%EB%AC%B8%EC%9E%90%EC%97%B4-%EC%93%B8-%EB%95%8C-%EC%9D%B4%EA%B1%B0%EB%8A%94-%EC%95%8C%EA%B3%A0-%EC%93%B0%EC%9E%90
