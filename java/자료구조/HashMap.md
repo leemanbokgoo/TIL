@@ -122,4 +122,6 @@ https://devlog-wjdrbs96.tistory.com/269
 - Q. 커스텀 객체를 HashMap의 키로 사용할 때 고려해야 할 사항은 무엇인가요?
 - A.커스텀 객체를 HashMap의 키로 사용할 때는 해당 객체의 일관성과 성능을 보장하기 위해 반드시 **hashCode()**와 equals() 메서드를 올바르게 구현해야 합니다. 자바의 HashMap은 해시 테이블을 기반으로 동작하기 때문에 키로 사용되는 객체가 해시 기반 탐색에 적합해야 합니다.
 
+참고링크 
 
+https://chaewsscode.tistory.com/183
