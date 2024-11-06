@@ -1,0 +1,74 @@
+# GitHub Actions
+- gitHub 공식문서 소개글
+    - GitHub Actions는 빌드, 테스트 및 배포 파이프라인을 자동화할 수 있는 CI/CD(연속 통합 및 지속적인 업데이트) 플랫폼입니다. 리포지토리에 대한 모든 끌어오기 요청을 빌드 및 테스트하거나 병합된 끌어오기 요청을 프로덕션에 배포하는 워크플로를 만들 수 있습니다.
+    - GitHub Actions은(는) 단순한 DevOps 수준을 넘어 리포지토리에서 다른 이벤트가 발생할 때 워크플로를 실행할 수 있도록 합니다. 예를 들어 누군가가 리포지토리에서 새 이슈를 만들 때마다 워크플로를 실행하여 적절한 레이블을 자동으로 추가할 수 있습니다.
+    - GitHub에서 워크플로를 실행할 Linux, Windows, macOS 가상 머신을 제공하거나, 사용자 고유의 데이터 센터 또는 클라우드 인프라에서 자체 호스트형 실행기를 호스트할 수 있습니다.
+
+- 즉, GitHub Actions는 빌드, 테스트 및 배포 파이프라인을 자동화 할 수 있는 지속적 통합 및 지속적 배포(CI/CD) 플랫폼이다.
+- 리포지토리에 대한 모든 풀 요청을 빌드 및 테스트하는 워크 플로를 생성하거나 Merge된 풀 요청을 프로덕션에 배포할 수 있다. 
+
+
+## Gihub Actions 특징
+- 컨테이너(도커) 기반으로 동작함
+- 개발자는 workflow를 작성하여 다양한 이벤트를 기반으로 실행 시킬 수 있다.
+- workflow는 Runners(기본 Azure, self-hosted 가능)라 불리는 인스턴스에서 리눅스,맥 OS,윈도우 환경에서 실행됨 -> 원하는 OS를 지정할 수도있고 한번에 여러 OS에서 테스트 가능
+- Github 마켓 플레이스에서 여러사람이 공유한 workflow를 찾아서 사용할 수도있고 직접 만들어서 공유할 수도있음
+- yaml로 작성
+
+## Gihub Actions 장점
+- 다른 CI/CD툴(젠킨스)들 처럼 서버 설치가 필요하지않음 제공해주는 클라우드(Azure)가 있음.
+- 비동기적 병령실행이 가능한 CI/CD
+- Github 마켓 플라이스를 이용하여 Workflow를 가져다 쓰거나 공유할 수 있음.
+- Github에서 제공하는 완전 관리형 서비스이므로 설정이 매우 쉬움
+
+## Gihub Actions 단점
+- 캐싱이 필요한 경우에는 자체 캐싱 로직을 작성해야함
+- 서버에 장애가 일어나거나 리소스를 초과 할 경우 개발자가 직접 문제를 해결해야한다.
+
+
+## GitHub Actions 구성요소
+
+### Workflow 
+- Workflow는 GitHub Actions의 기본 구성 단위이다. 일반적으로 .github/workflows/<workflow_name>.yml이라는 yml 파일에 정의된다. 워크 플로우는 하나 이상의 작업을 포함할수있으며 리포지토리에서 푸시 또는 풀 요청과 같은 이벤트에 의해 트리거된다.
+```
+on:
+    push:
+        branches:
+        - main
+        - develop
+    pull_request:
+```
+
+### Events
+- 이벤트는 워크플로를 시작하는 트리거이다. 일반적인 이벤트에는 push, pull_request 및 일정이 포함된다. 특정 요구사항에 따라 workflow를 트리거하는 사용자 지정 이벤트를 만들 수도있다.
+
+### jobs
+- 작업은 workflow내에서 실행되는 개별작업이다. 러너라는 가상머신에서 실행되며 하나이상의 단계를 포함할 수 있다. 작업은 종속성에 따라 병렬 또는 순차적으로 실행 될 수 있다. 
+
+### Steps
+- 단계는 작업 내 작업의 가장 작은 단위이다. 각 단계는 셸 명령을 실행하거나 작업을 실행 할 수 있다. 단계는 workflow 파일에 지정된 순서대로 실행되며 각 단계는 동일한 실행기 인스턴스 내에서 실행된다.
+
+### Actions
+- 작업은 작업 흐름에서 공유 및 결합할 수 있는 재사용 가능한 코드 단위이다. GitHub 커뮤니티에서 개발 및 게시하거나 자체적으로 사용할 수 있도록 만들 수 있다. 작업은 일반적으로 별도의 리포지토리에 저장되며 해당 리포지토리 이름으로 워크플로 파일에서 참조된다.
+
+### Runners
+- Runners는 작업이 실행되는 가상 머신 또는 자체 호스팅 환경이다. GitHub는 다양한 운영체제(리눅스, macOs, Window)및 하드웨어 구성을 호스팅 러너에 제공하거나 보다 전문적인 요구사항을 위해 자체 호스팅 러너를 설정할 수 있다.
+
+### Environment Variables and Secerts
+- 환경 변수는 workflow내의 작업 및 스크립트에서 엑세스 할 수 있는 데이터를 저장하는 데 사용된다. 비밀은 엑세스 토큰 또는 API키와 같은 민감한 데이터를 저장하는데 사용되는 암호화된 한경변수이다. 로그에 노출되지않으면서 동일한 리포짙토리에서 실행되는 작업을 통해서만 엑세스 할 수 있다.
+
+### Artifacts And Caching
+- 아티팩트는 빌드 추렭 또는 테스트 결과와 같이 나중에 저장하고 사용할 수 있는 workflow에서 생성된 파일이다. 캐싱은 workflow 실행 간에 데이터를 저장하고 검색하는 데 사용되므로 이전에 다운로드한 종속성 또는 빌드 출력을 재사용하여 프로세스 속도를 높일 수 있다.
+
+
+참고링크 
+
+https://docs.github.com/ko/actions/about-github-actions/understanding-github-actions
+
+https://fe-developers.kakaoent.com/2022/220106-github-actions/
+
+https://tech.kakao.com/posts/516
+
+https://somaz.tistory.com/213
+
+https://www.daleseo.com/github-actions-basics/
