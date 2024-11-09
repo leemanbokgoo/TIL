@@ -46,6 +46,17 @@
 - Spring Data JPA가 JPA를 추상화했다는 말은, Spring Data JPA의 Repository의 구현에서 JPA를 사용하고 있다는 것이다. 예를 들어, Repository 인터페이스의 기본 구현체인 SimpleJpaRepository의 코드를 보면 아래와 같이 내부적으로 EntityManager을 사용하고 있는 것을 볼 수 있다.
 ![image](https://github.com/user-attachments/assets/34d5a9cd-8227-4932-a7df-e8514ebef929)
 
+### 질문
+
+#### jpa vs hirbernate vs spring data jpa 의 차이점은 무엇인가요?
+- **JPA (Java Persistence API)**는 Java에서 객체-관계 매핑(ORM)을 위한 표준 API로, 데이터베이스와의 상호작용을 정의하는 규격을 제공합니다. Hibernate는 JPA의 구현체로, JPA에서 제공하는 기능을 지원하면서도 자체적으로 추가적인 고급 기능을 제공하여 더 효율적인 데이터베이스 작업을 가능하게 합니다. Spring Data JPA는 Spring Framework에서 제공하는 라이브러리로, JPA를 쉽게 사용할 수 있도록 도와주며, 복잡한 쿼리 작성 없이 데이터 액세스를 간소화하고 자동화된 CRUD 작업을 제공하여 개발 생산성을 높여줍니다.
+
+#### 질문 1: JPA와 Hibernate는 어떻게 관계가 있나요?
+- JPA는 객체-관계 매핑을 위한 표준 명세로, 특정 구현체에 의존하지 않습니다. 반면, Hibernate는 JPA의 구현체로, JPA에서 정의한 인터페이스를 실제로 구현하여 데이터베이스와 상호작용하는 기능을 제공합니다. JPA는 규격을 정의하는 역할을 하고, Hibernate는 그 규격을 구현하여 데이터베이스와의 연결을 관리합니다.
+####  Spring Data JPA는 Hibernate와 어떤 관계가 있나요?
+-  Spring Data JPA는 JPA를 쉽게 사용하도록 돕는 라이브러리입니다. 내부적으로 Hibernate를 사용하여 데이터베이스와 상호작용하는데, Spring Data JPA는 Hibernate와 JPA의 기능을 추상화하여 Repository 인터페이스를 통해 개발자가 JPA를 더 직관적으로 사용할 수 있도록 도와줍니다. 즉, Hibernate는 Spring Data JPA에서 실제 구현체로 사용될 수 있으며, Spring Data JPA는 JPA를 사용하기 더 간편하게 만든 도구입니다.
+
+
 참고링크 
 
 https://suhwan.dev/2019/02/24/jpa-vs-hibernate-vs-spring-data-jpa/
