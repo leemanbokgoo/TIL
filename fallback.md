@@ -16,3 +16,7 @@
 - 참고) https://worthpreading.tistory.com/90
 ### Timeout
 ### 실제 명령어의 수행 여부
+
+참고링크 
+
+https://velog.io/@sweet_sumin/Fallback
