@@ -73,10 +73,93 @@ int index = X.hashCode() % M;
 
 ### 자바의 해시 충돌 해결 방법의 역사
 
-- jdk7까지는 linked list를 사용한 separate chaning과 보조해시 함수을 활용했다.
+- jdk7까지는 linked list를 사용한 separate chaning과 보조해시 함수를 활용했다.
+
+### 왜 separate chaning을 사용했을까?
+-  Open Addressing은 데이터를 삭제할 때 처리가 효율적이기 어려운데, HashMap에서 remove() 메서드는 매우 빈번하게 호출될 수 있기 때문이다. 게다가 HashMap에 저장된 키-값 쌍 개수가 일정 개수 이상으로 많아지면, 일반적으로 Open Addressing은 Separate Chaining보다 느리다. 
+- Open Addressing의 경우 해시 버킷을 채운 밀도가 높아질수록 Worst Case 발생 빈도가 더 높아지기 때문이다. 반면 Separate Chaining 방식의 경우 해시 충돌이 잘 발생하지 않도록 '조정'할 수 있다면 최악 또는 최악에 가까운 일이 발생하는 것을 줄일 수 있다
+-  Java 7에서의 해시 버킷 관련 구현
+
+    ```
+    transient Entry<K,V>[] table = (Entry<K,V>[]) EMPTY_TABLE;  
+    // transient로 선언된 이유는 직렬화(serializ)할 때 전체, table 배열 자체를 직렬화하는 것보다
+    // 키-값 쌍을 차례로 기록하는 것이 더 효율적이기 때문이다.
+
+    static class Entry<K,V> implements Map.Entry<K,V> {  
+            final K key;
+            V value;
+            Entry<K,V> next;
+            int hash;
+
+    Entry(int h, K k, V v, Entry<K,V> n) {  
+                value = v;
+                next = n;
+                key = k;
+                hash = h;
+            }
+
+            public final K getKey() { … }
+    public final V getValue() { …}  
+            public final V setValue(V newValue) { … }
+            public final boolean equals(Object o) { … }
+            public final int hashCode() {…}
+            public final String toString() { …}
+
+    void recordAccess(HashMap<K,V> m) {… }
+
+    void recordRemoval(HashMap<K,V> m) {…}  
+    }
+    ```
+- Java 7에서의 put() 메서드 구현
+
+    ```
+    public V put(K key, V value) { if (table == EMPTY_TABLE) { inflateTable(threshold); // table 배열 생성 } // HashMap에서는 null을 키로 사용할 수 있다. if (key == null) return putForNullKey(value); // value.hashCode() 메서드를 사용하는 것이 아니라, 보조 해시 함수를 이용하여 // 변형된 해시 함수를 사용한다. "보조 해시 함수" 단락에서 설명한다.  
+        int hash = hash(key);
+
+        // i 값이 해시 버킷의 인덱스이다.
+        // indexFor() 메서드는 hash % table.length와 같은 의도의 메서드다.
+        int i = indexFor(hash, table.length);
+
+
+
+        // 해시 버킷에 있는 링크드 리스트를 순회한다.
+        // 만약 같은 키가 이미 저장되어 있다면 교체한다.
+        for (Entry<K,V> e = table[i]; e != null; e = e.next) {
+            Object k;
+            if (e.hash == hash && ((k = e.key) == key || key.equals(k))) {
+                V oldValue = e.value;
+                e.value = value;
+                e.recordAccess(this);
+                return oldValue;
+            }
+        }
+
+        // 삽입, 삭제 등으로 이 HashMap 객체가 몇 번이나 변경(modification)되었는지
+        // 관리하기 위한 코드다.
+        // ConcurrentModificationException를 발생시켜야 하는지 판단할 때 사용한다.
+        modCount++;
+
+
+        // 아직 해당 키-값 쌍 데이터가 삽입된 적이 없다면 새로 Entry를 생성한다. 
+        addEntry(hash, key, value, i);
+        return null;
+    }
+
+    ```
+    출처 : https://d2.naver.com/helloworld/831311
+
+
+## Java 8 HashMap에서의 Separate Chaining은?
 - jdk8에서 linked list와 red black tree를 혼용한 separate chaining을 활용하여  충돌을 한 key-value쌍이 적을때는 Linked List로 작동을 한다.
 충돌을 한 key-value쌍이 특정 임계치에 도달하면 red-black tree로 작동을 한다.
     - Linked List는 탐색하는데 시간복잡도가 O(n)의 비용이 드나 red black tree는 O(log n) 이 들기 때문에 jdk8 에서는 성능적으로 개선이 되었다고 할 수 있다.
+
+#### 여기서 링크드 리스트를 사용할것인가 트리를 사용할 것인가에 대한 기준은 뭘까? 
+![image](https://github.com/user-attachments/assets/33dd5e16-8743-4386-9bf1-be427dceeea1)
+- 링크드 리스트를 사용할 것인가 트리를 사용할 것인가에 대한 기준은 하나의 해시 버킷에 할당된 키-값 쌍의 개수이다. 위의 그림에서 보듯 Java 8 HashMap에서는 상수 형태로 기준을 정하고 있다.
+-  즉 하나의 해시 버킷에 8개의 키-값 쌍이 모이면 링크드 리스트를 트리로 변경한다. 만약 해당 버킷에 있는 데이터를 삭제하여 개수가 6개에 이르면 다시 링크드 리스트로 변경한다.
+-  트리는 링크드 리스트보다 메모리 사용량이 많고, 데이터의 개수가 적을 때 트리와 링크드 리스트의 Worst Case 수행 시간 차이 비교는 의미가 없기 때문이다.
+-  8과 6으로 2 이상의 차이를 둔 것은, 만약 차이가 1이라면 어떤 한 키-값 쌍이 반복되어 삽입/삭제되는 경우 불필요하게 트리와 링크드 리스트를 변경하는 일이 반복되어 성능 저하가 발생할 수 있기 때문.
 
 ### 질문
 
