@@ -15,12 +15,11 @@
 - 람다식을 활용할 수 있으며 고급 필터링 옵션을 제공한다.
 - logback과 동일하게 log 설정 변경 시 서버를 재시작할 필요가 없는 자동 리로드가 가능하며 필터링을 제공한다.
 - log level은 log4j와 동일하다.
-- Log4j 2의 가장 눈에 띄는 기능들 가운데 하나는 비동기 성능이다. Log4j 2는 LMAX 디스럽터를 활용하는데, 이 라이브러리는 커널 락의 필요성을 줄이며 12배만큼 로깅 성능을 제공.동일 환경에서 Log4j 2는 1초에 18,000,000개 이상의 메시지를 기록할 수 있는 반면 Logback과 Log4j 1 등은 초당 2,000,000개 미만의 메시지를 기록할 수 있다고 한다. 파일뿐만 아니라 HTTP, DB, Kafka에 로그를 남길 수 있으며 비동기적인 로거를 지원합니다.
-- 로깅 성능이 중요시될 때 Log4j2 사용을 고려합니다.
-- spring-boot-starter-web 모듈에 Logback을 사용하는 spring-boot-starter-logging 모듈이 포함되어있습니다.
-- Log4j2 사용을 위해서는 spring-boot-starter-logging 모듈을 exclude하고 spring-boot-starter-logging-log4j2 의존성을 주입해야 합니다.
-- Logback과 달리 멀티 쓰레드 환경에서 비동기 로거(Async Logger)의 경우 Log4j 1.x 및 Logback보다 성능이 우수합니다.
-- 2021년 말, 최대 보안 이슈인 Apache Log4j2의 보안 취약점이 발견되었으며 글을 쓰는 현재는 최신 버전으로 업데이트 했을 경우 해당 문제를 해결할 수 있습니다.
+- Log4j 2의 가장 눈에 띄는 기능들 가운데 하나는 비동기 성능이다. Log4j 2는 LMAX 디스럽터를 활용하는데, 이 라이브러리는 커널 락의 필요성을 줄이며 12배만큼 로깅 성능을 제공.동일 환경에서 Log4j 2는 1초에 18,000,000개 이상의 메시지를 기록할 수 있는 반면 Logback과 Log4j 1 등은 초당 2,000,000개 미만의 메시지를 기록할 수 있다고 한다. 파일뿐만 아니라 HTTP, DB, Kafka에 로그를 남길 수 있으며 비동기적인 로거를 지원.
+- 로깅 성능이 중요시될 때 Log4j2 사용을 고려.
+- Log4j2 사용을 위해서는 spring-boot-starter-logging 모듈을 exclude하고 spring-boot-starter-logging-log4j2 의존성을 주입해야 함.
+- Logback과 달리 멀티 쓰레드 환경에서 비동기 로거(Async Logger)의 경우 Log4j 1.x 및 Logback보다 성능이 함.
+- 2021년 말, 최대 보안 이슈인 Apache Log4j2의 보안 취약점이 발견되었으며 글을 쓰는 현재는 최신 버전으로 업데이트 했을 경우 해당 문제를 해결할 수 있다.
 
 ## 비교 
 
