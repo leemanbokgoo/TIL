@@ -153,7 +153,7 @@ private String createUserWithEmail(String userEmail) {
     User newUser = new User(userEmail);
     return userRepository.save(newUser);
 }
- ```
+```
  
 - 실제 서비스에서 위와 같은 오류를 범한다면 큰 시스템 장애로 돌아오게 된다. 설령 문제가 없다고 하더라도 orElse는 값을 생성하여 orElseGet보다 비용이 크므로 최대한 사용을 피해야 한다. 그러므로 orElse와 orElseGet의 차이점을 정확히 이해하고 사용하도록 하자.
  
