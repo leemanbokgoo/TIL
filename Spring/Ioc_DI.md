@@ -42,13 +42,13 @@
     - 테스트 작성을 용이하게 함
 - 하지만 의존 관계를 주입할 객체를 계속해서 생성하고 소멸한다면, 아무리 GC가 성능이 좋아졌다고 하더라도 부담이 된다. 그래서 Spring에서는 Bean들을 기본적으로 싱글톤(Singleton)으로 관리한다.
 
-## DI(의존관계주입)
+## DI(의존관계주입) 방법
 - 의존 관계 주입으로는 3가지 방법이 존재한다.
     - 생성자 주입
     - 수정자 주입
     - 필드 주입
 
-### 생성자 주입
+### 1.생성자 주입
 ![image](https://github.com/user-attachments/assets/30962906-ebd6-4df2-937f-98b2f02e5f25)
 - 생성자에 @Autowirde 어노테이션을 붙여 의존성을 주입 받을 수 있으며 가장 권장되는 주입방식이다. 생성자를 통해 의존관계를 주입하는 방법이며, 생성자를 호출 시에 딱 한번만 호출되는 것을 보장한다.
 - 스프링 4.3 버전 이후라면 생성자가 1개만 존재할때, @Autowired를 생략해도 주입이되며, 주입받은 필드에 final키워드를 사용함으로써 주입돼야하는 것을 보장한다.
@@ -58,22 +58,156 @@
 - 의존성 주입이 필요한 필드를 final키워드로 선언이 가능
 - 스프링에서 순환참조 감지 기능을 제공하며 순환참조 시 에러를 보여준다
 - 테스트 코드 작성이 용이함.
+- 필수적으로 사용해야 하는 레퍼런스 없이는 인스턴스를 만들지 못하도록 강제함.
+- Spring 4.3 이상으로부터는 생성자가 하나인 경우 @Autowired를 사용하지 않아도 됨.
 
-### 수정자 주입
+## 생성자 주입의 단점
+- 어쩔 수 없는 순환 참조는 생성자 주입으로 해결하기 어려움
+    - 이러한 경우에는 나머지 주입 방법 중에 하나를 사용
+    - 가급적이면 순환 참조가 발생하지않도록 하는 것이 중요.
+
+### 2.수정자 주입
 ![image](https://github.com/user-attachments/assets/3f67bd27-7569-4397-b4aa-47489b66d516)
 
 - setter를 사용하여 의존관계를 주입하는 방법이다. 수정자 주입의 경우 final 키워드 선언이 불가능하며 setter 메서드에 @Autowired를 붙어 사용한다.
 
-### 필드주입
+#### 수정자 주입의 장점
+- 의존성이 선택적으로 필요한 경우에 사용
+- 생성자에 모든 의존성을 기술하면 과도하게 복잡해질 수 있는 것을 선택적으로 나눠 주입할 수 있게 부담을 덜어줌.
+- 생성자 주입 방법과 Setter 주입 방법을 적절하게 상황에 맞게 분배하여 사용
+
+#### 수정자 주입의 단점
+- 의존성 주입 대상 필드가 final 선언 불가 
+
+### 3.필드주입
 ![image](https://github.com/user-attachments/assets/99d9f792-14cd-4961-9855-1144cb5ba38a)
 
-- 필드 주입이란 필드에 직접 의존관계를 주입하는 방법이다. 이는 코드가 짧아지는 장점이 있지만 외부에서 변경이 불가능하고 테스트 코드를 작성하기 힘들다는 단점이 존재한다. 또한 final키워드 선언이 불가능해지고 의존 관계를 파악하기 힘들어진다. (불변성을 보장하지않고 코드를 볼떄 한번에 의존 관계를 파악하기 힘들다.)
+- 필드 주입이란 필드에 직접 의존관계를 주입하는 방법이다. 이는 코드가 짧아지는 장점이 있지만 외부에서 변경이 불가능하고 테스트 코드를 작성하기 힘들다는 단점이 존재한다. 또한 final키워드 선언이 불가능해지고 의존 관계를 파악하기 힘들어진다. (불변성을 보장하지않고 코드를 볼때 한번에 의존 관계를 파악하기 힘들다.)
+
+### @Autowired 를 사용을 지양해야하는 이유
+- @Autowired 어노테이션을 이용하면 설정자 메서드를 이용하지않고도 스프링 프레임워크가 설정 파일을 통해 설정자 메서드 대신 속성을 주입해준다(스프링 설정 파일을 보고 자동으로 속성의 설정자 메서드에 해당하는 역할을 해주겠다는 의미)
+- @Autowired는 type 기준으로 매칭을 하기때문에 같은 타입을 구현한 클래스가 여러개 있다면 그때 bean 태그의 id로 구분해서 매칭한다. (id 매칭보다 type 매칭이 우선이다.)
+- @Resourece의 경우 type과 id 가운데 매칭 우선순위는 id가 높다. id로 매칭할 빈을 찾지못한 경우 type으로 매칭할 빈을 찾게 된다.
+
+#### 필두주입의 장점
+- 가장 간단한 선언 방식
+
+#### 필드주입의 단점
+- 의존 관계가 잘 보이지않아 추상적이고, 이로 인해 의존성 관계가 과도하게 복잡해질 수 있음.
+- 반대로 Constructor 과 Setter injection은 의존성을 명확하게 커뮤니케이션 함 => 이는 SRP/단일 책임 원칙에 반하는 안티패턴
+- DI Container와 같은 강한 결합을 가져 외부 사용이 용이하지않음.
+- 단위 테스트시 의존성 주입이 용이하지않음.
+- 의존성 주입 대상 필드가 final 선언 불기 
 
 ### 순환참조
-- 순환참조란 두개이상의 빈(객체)이 서로를 참조하면서 서로가 서로에 생성에 필요한 상황을 말한다. 예를 들어 A클래스는 B클래스에 의존하고 B클래스는 A클래스에 의존하는 상황을 순환참조라고 볼수있다.순환 참조는 두가지 상황에서 발생할 수 있다.
+- 순환참조란 두개이상의 빈(객체)이 서로를 참조하면서 서로가 서로에 생성에 필요한 상황을 말한다. 예를 들어 A클래스는 B클래스에 의존하고 B클래스는 A클래스에 의존하는 상황을 순환참조라고 볼수있다.순환 참조는 두가지 상황에서 발생할 수 있다. 즉, 스프링에서 어떤 스프링 빈을 먼저 만들어야할 지 결정 할 수 없게 되는 상황이라 할 수 있다. 
     - 필드주입 / 수정자 주입인경우
     - 생성자 주입인 경우
+### 순한 참조가 발생하는 경우 3가지 
+- 순환참조는 맞물리는 DI(Dependency Injection)상황에서 스프링이 어느 스프링 빈을 먼저 생성할지 결정하지 못하기 때문이다. 그렇기 때문에 이 순환참조 문제도 DI를 하는 방법 3가지 상황에서 발생할 수 있는데, 생성자 주입방식, 필드 주입방식, Setter주입 방식이 있고, 이 중에서 생성자 주입 방식은 순환참조문제가 다르게 발생한다. 
 
+#### 생성자 주입 방식
+
+```
+@Component
+public class BeanA {
+	private BeanB beanB;
+
+	public void BeanA(BeanB beanB){
+		this.beanB = beanB;
+	}
+}
+
+@Component
+public class BeanB {
+	private BeanA beanA;
+
+	public void BeanB(BeanA beanA){
+		this.beanA = beanA;
+	}
+}
+
+```
+
+- 애플리케이션을 구동하면 이제 스프링 컨테이너(IOC)는 BeanA 빈을 생성하기위해 BeanB를 주입해줘야하기 때문에 BeanB를 찾을 것이다. 근데 BeanB를 생성하려 하니 BeanA가 필요해서 BeanA를 주입하기위해 BeanA를 찾게되면서 무한 반복이 생기게 된다. 
+
+#### 필드,Setter 주입 방식
+- Field injection 방식
+```
+@Component
+@Slf4j
+public class BeanA {
+	@Autowired
+	private BeanB beanB;
+
+	public void run(){
+		beanB.run();
+	}
+
+	public void call(){
+		log.info("called BeanA");
+	}
+}
+
+@Component
+@Slf4j
+public class BeanB {
+	@Autowired
+	private BeanA beanA;
+
+	public void run(){
+		log.info("Called BeanB");
+		beanA.call();
+	}
+}
+
+```
+- Setter Injection 방식
+```
+@Component
+@Slf4j
+public class BeanA {
+	private BeanB beanB;
+
+	@Autowired
+	public void setBeanB(BeanB beanB){
+		this.beanB = beanB;
+	}
+
+	public void run(){
+		beanB.run();
+	}
+
+	public void call(){
+		log.info("called BeanA");
+	}
+}
+
+@Component
+@Slf4j
+public class BeanB {
+	private BeanA beanA;
+
+	@Autowired
+	public void setBeanA(BeanA beanA){
+		this.beanA = beanA;
+	}
+
+	public void run(){
+		log.info("Called BeanB");
+		beanA.call();
+	}
+}
+```
+- 이 두 가지 DI 방식은 순환참조문제가 애플리케이션 구동 당시에는 발생하지 않는다. 
+- 이 두 가지 방식은 애플리케이션 구동 시점에서는 필요한 의존성이 없을 경우에는 null 상태로 유지하고 실제로 사용하는 시점에 주입을 하기 때문이다. 그렇기에 위 두 가지 방식은 모두 순환참조를 일으킬 수 있는 메서드를 호출하는 시점에서 순환참조 문제가 발생할 것이다. 
+
+#### 순환참조 해결책
+- 순환을 끊음으로써 순환참조 문제를 해결해야하는데, 스프링에서는 @Lazy라는 애노테이션을 통해 이런 순환참조를 끊을수 있도록 한다. 
+- 그런데 정작 스프링에서는 이 방식을 추천하지 않는다. 공식문서에서는 지연 초기화하는 이 방식의 단점으로 애플리케이션에서 문제를 발견하는게 늦어진다는 점을 들었다. 
+- 만약, 스프링 빈이 잘못 구성되어 있는데 초기화가 지연된다면, 애플리케이션은 이 문제를 발견하지 못하고 있다가 나중에 빈이 초기화되는 시점에서 발견하게 된다. 늘 말하지만, 모든 문제는 최대한 빠른 시점에 알게되는게 좋다. 런타임 예외보다는 컴파일 예외가 낫다는 점과 동일하다. 
+- 또한 해당 빈이 초기화가 되는 시점에 JVM의 힙 메모리의공간이 충분한지도 불분명하다.  혹시라도 힙 메모리가 부족해서 빈이 생성될 인스턴스가 저장될 메모리 공간이 없다면 이 역시 문제가 된다. 그렇기에 스프링측에서는 지연 초기화를 권장하지 않는다. 
+- 고로 설계에서 부터 순환참조가 일어나지않도록 설계해야한다.
 
 ### 질문
 #### 왜 생성자 주입 방식이 다른 주입 방식(수정자 주입, 필드 주입)보다 더 권장되나요?
@@ -90,3 +224,11 @@ https://developshrimp.com/entry/Spring-IoC%EC%A0%9C%EC%96%B4%EC%9D%98-%EC%97%AD%
 https://mangkyu.tistory.com/150
 
 https://mangkyu.tistory.com/125
+
+https://velog.io/@sung_hyuki/Autowired%EC%9D%98-%EC%9B%90%EB%A6%AC%EC%99%80-%EC%8A%A4%ED%94%84%EB%A7%81-%ED%8C%80%EC%97%90%EC%84%9C-Autowired%EC%9D%98-%EC%82%AC%EC%9A%A9%EC%9D%84-%EC%A7%80%EC%96%91%ED%95%98%EB%9D%BC%EA%B3%A0-%ED%95%98%EB%8A%94-%EC%9D%B4%EC%9C%A0-%EC%B6%94%EA%B0%80-%EC%88%98%EC%A0%95-%ED%95%84%EC%9A%94
+
+https://devlog-wjdrbs96.tistory.com/166
+
+https://devlog-wjdrbs96.tistory.com/166
+
+https://m42-orion.tistory.com/100
