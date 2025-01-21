@@ -24,9 +24,6 @@
 - 즉, 화면에 복잡한 화면과 데이터의 구성 필요한 구성이라면, Controller에 다수의 Model과 View가 복잡하게 연결되어 있는 상황이 생길 수 있다 MVC가 너무 복잡하고 비대해져서, 새 기능을 추가할때마다 크고 작은 문제점을 가지고 소드 분석이나 테스트도 어렵다. 이런 형태의 MVC를 Massive ViewController (대규모 MVC 어플리케이션) 라고 부른다. 
 - 그래서 위의 문제점을 보완한 여러 다양한 패턴을 파생됨 -> MVP, MVVM, Viper, Clean Architecture, Flux, Redux, RxMVVM
 
- 
-
-
 ## MVC Model 1
 ![image](https://github.com/user-attachments/assets/215b1155-a12f-4547-8fa7-bcc7adc5bb21)
 - JPS를 이용한 단순한 모델. 웹브라우저의 요청을 JSP가 직접 처리한다. JSP는 자바빈이나 서비스 클래스를 사용해서 웹브라우저가 요청한 작업을 처리하고 그 결과를 클라이언트에 출력한다.
