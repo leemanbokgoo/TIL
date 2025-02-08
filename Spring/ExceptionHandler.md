@@ -6,15 +6,13 @@
 - @ControllerAdvice 또는 특정 컨트롤러 클래스 내에 특정 예외가 발생했을 때 이를 처리하기 위한 메서드를 정의할 수 있도록 지원하는 어노테이션이고 이를 통해 예외 발생 시 프로그램의 흐름을 중단하지 않고, 오류를 보다 유연하게 처리하거나 사용자에게 알맞은 메시지를 반환하게 한다.
 - 스프링은 API 예외 처리 문제를 해결하기 위해 @ExceptionHandler 라는 애노테이션을 사용하는 매우 편리한 예외 처리 기능을 제공하는데, 이것이 바로 ExceptionHandlerExceptionResolver 이다. 컨트롤러의 메소드에 @ExceptionHandler를 추가함으로써 에러를 처리할 수 있다. @ExceptionHandler에 의해 발생한 예외는 ExceptionHandlerExceptionResolver에 의해 처리가 된다.
 - 즉 예외 처리를 WAS로 바로 넘기는게 아니라 이를 직접처리하여 로깅 혹은 유저 친화적인 에러 메시지로 변경할 수 있다는 것이 중요하다.
-- ExceptionHandler는 HandlerExceptionResolver에 의해 처리된다.
 - @ExceptionHandler 는 등록된 해당 Controller 에서만 적용이 된다. 다른 컨트롤러의 예외는 잡을 수 없다. 같은 예외가 발생한 것이고 같은 처리를 해주고 싶은 경우가 있을 수 있다. 다른 컨트롤러에서의 작업이라면 해당 컨트롤러에 같은 @ExceptionHandler 를 적용해주어야 한다. 똑같은 기능을 하는 똑같이 생긴 코드를 반복하는 것은 번거럽고 낭비이다. 이러한 번거로움을 해결할 수 있는 방법이 있는데, 바로 @ControllerAdvice 이다.
 
-## @ExeceptionHandler의 장점
+## @ExceptionHandler의 장점
 - 위에서 봤다시피 @ExeceptionHandler의 큰 장점은 에러 발생 시 was에 넘기기 전에 사용자 정의 메서드를 거친다는 것이다. 이 뿐만이 아니라 몇가지 장점이 더 있는데 아래와 같다.
     - 예외 처리를 중앙에서 관리할 수 있어 코드 가독성 향상 및 유지보수 쉬워짐
     - 예외 상황에 따라 사용자 맞춤 응답을 정의
-    - 
-    응답 상태 코드, 메시지 등을 일관되게 관리
+    - 응답 상태 코드, 메시지 등을 일관되게 관리
 
 ## @ExeceptionHandler 동작 원리
 
@@ -45,7 +43,7 @@
  
 
 - Spring MVC에서 @ExceptionHandler는 컨트롤러 내부에서 발생한 특정 예외를 처리하는 메서드를 정의할 때 사용된다. 예외가 발생하면 Spring은 먼저 해당 컨트롤러에서 @ExceptionHandler가 붙은 메서드를 찾아 실행한다.
-- 만약 컨트롤러 내에서 처리할 수 있는 @ExceptionHandler가 없다면, 전역 예외 처리 역할을 하는 @ControllerAdvice에서 적절한 예외 처리 메서드를 탐색합니다. 그래도 처리되지 않으면 Spring의 기본 예외 처리 메커니즘(BasicErrorController)이 동작하여 기본적인 오류 응답을 반환한다.
+- 만약 컨트롤러 내에서 처리할 수 있는 @ExceptionHandler가 없다면, 전역 예외 처리 역할을 하는 @ControllerAdvice에서 적절한 예외 처리 메서드를 탐색한다. 그래도 처리되지 않으면 Spring의 기본 예외 처리 메커니즘(BasicErrorController)이 동작하여 기본적인 오류 응답을 반환한다.
 - 즉, 예외 처리의 우선순위는 1) 컨트롤러 내부의 @ExceptionHandler → 2) @ControllerAdvice의 전역 예외 처리 → 3) Spring 기본 예외 처리 순으로 진행된다. 이러한 구조를 통해 개발자는 특정 컨트롤러에서만 예외를 처리할지, 아니면 전역적으로 처리할지를 선택할 수 있으며, 클라이언트에게 일관된 에러 응답을 제공할 수 있다.
 
 
