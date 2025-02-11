@@ -1,5 +1,6 @@
 # Restful API
 - 웹서비스를 개발하기위한 아키텍처 스타일 RestfulAPI는 Representational State Transfer API의 약자이며, RESTful API는 REST API의 원칙과 제약을 따르는 API를 의미한다.
+- REST는 Representational State Transfer의 약어로, 자원을 이름으로 구분해 해당 자원의 정보를 주고받는 방식의 모든것을 의미한다. REST는 기본적으로 HTTP 프로토콜을 활용하기 때문에 웹의 장점을 최대한으로 활용할 수 있는 아키텍쳐 스타일. 자원을 URI로 구성하고, 행위로는 HTTP Method를 사용한다. 서버와 클라이언트가 JSON이나 XML등을 통해 데이터를 주고받는 것이 일반적이다.
 - REST API는 다음과 같은 원칙과 특징을 가지고있다.
     - 리소스 중심: REST API는 웹 서비스를 리소스의 집합으로 이해한다. 각 리소스는 고유한 식별자(URI)를 가지고 있으며, 클라이언트는 URI를 통해 리소스를 식별하고 조작.
     - URI를 통한 리소스 식별: REST API는 URI를 사용하여 각 리소스를 고유하게 식별. 예를 들어, /users URI는 사용자 리소스를 나타내고, /users/1은 ID가 1인 특정 사용자를 식별헌더.
