@@ -1,15 +1,15 @@
+
+
+## Stream 중간 연산
 ![Image](https://github.com/user-attachments/assets/e486e00c-878d-4b47-9967-c54121a5fdf1)
 
+- Java의 Stream API에서 중간 연산(Intermediate Operation) 은 스트림의 요소들을 변환, 필터링, 정렬하는 등의 작업을 수행하는 연산.
 -  객체의 Stream을 생성하고 중간 연산을 수행하고 최종 연산을 하여 결과값을 얻는다.
 
 ```
 객체.Stream생성().중간연산.최종연산()
 
 ```
-
-## Stream 중간 연산
-- Java의 Stream API에서 중간 연산(Intermediate Operation) 은 스트림의 요소들을 변환, 필터링, 정렬하는 등의 작업을 수행하는 연산.
-
 ## 중간연산 특징
 - 지연 실행(Lazy Evaluation) → 최종 연산(Terminal Operation)이 호출될 때까지 실행되지 않음.
 - 스트림을 반환 → 기존 스트림을 변경하지 않고 새로운 스트림을 반환하여 연속적인 연산이 가능함.
