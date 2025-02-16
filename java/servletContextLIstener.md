@@ -23,15 +23,7 @@
 ![Image](https://github.com/user-attachments/assets/79b3f9bf-027e-46e9-90c1-fafbe7f73e4b)
 
 # servletContextListener
--  Java Servlet API에서 제공하는 인터페이스로, 웹 애플리케이션의 초기화 및 종료 시점에 특정 작업을 수행할 수 있도록 설계된 이벤트 리스너. 이를 통해 애플리케이션의 전역적인 리소스 초기화 및 정리를 처리할 수 있다. 서블릿 컨텍스트(ServletContext)의 생명주기를 감지하고 특정 동작을 수행할 수 있도록 해주는 인터페이스이다. 즉, 웹 애플리케이션이 시작되거나 종료될 때 실행할 작업을 정의하는 리스너라고 할 수 있다. 이를 활용하면 애플리케이션 초기화 작업(예: DB 연결, 설정 파일 로드)이나 종료 작업(예: 리소스 해제, 로그 기록)을 수행할 수 있다.
--  웹 어플리케이션 시작·종료시 특정한 기능을 실행하기위해서는 아래의 코드를 작성하면 된다.
-    - 1. javax.servlet.ServletContextListener 인터페이스를 구현한 클래스를 작성
-    - 2. web.xml 파일에 1번에서 작성한 클래스를 등록
-- javax.servlet.ServletContextListener: 웹 어플리케이션이 시작·종료될 때 호출할 메서드를 정의한 인터페이스
-- javax.servlet.ServletContextListener 인터페이스는 웹 어플리케이션이 시작되거나 종료될 때 호출할 메서드를 정의할 인터페이스로서, 다음과 같은 두 개의 메서드를 정의하고 있다.
-    - public void contextInitialized(ServletContext sce) : 웹 어플리케이션을 초기화할 때 호출한다.
-    - public void contextDestroyed(ServletContext sce) : 웹 어플리케이션을 종료할 때 호출한다.
-- 웹 어플리케이션이 시작되거나 종료될 때 ServletContextListener 인터페이스를 구현한 클래스를 실행하려면 web.xml 파일에 <listener> 태그와 <listener-class> 태그를 사용해서 완전한 클래스 이름을 명시해주면 된다
+-  Java Servlet API에서 제공하는 인터페이스로, 웹 애플리케이션의 초기화 및 종료 시점에 특정 작업을 수행할 수 있도록 설계된 이벤트 리스너.  웹어플리케이션의 시작과 종료 이벤트를 핸들링할 수 있는 이벤트 리스너이다. ServletContextListener는 웹 애플리케이션의 생명주기를 감지하여 특정 작업을 수행하는 인터페이스이다. 즉, 웹 애플리케이션이 시작되거나 종료될 때 실행되는 이벤트를 처리하는 리스너 역할을 한다. 이를 통해 애플리케이션의 전역적인 리소스 초기화 및 정리를 처리할 수 있다. 서블릿 컨텍스트(ServletContext)의 생명주기를 감지하고 특정 동작을 수행할 수 있도록 해주는 인터페이스이다. 웹 애플리케이션이 시작되거나 종료될 때 실행할 작업을 정의하는 리스너라고 할 수 있다. 이를 활용하면 애플리케이션 초기화 작업(예: DB 연결, 설정 파일 로드)이나 종료 작업(예: 리소스 해제, 로그 기록)을 수행할 수 있다.
 
 ### 서블릿 리스너 동작 구조 
 ![image](https://github.com/user-attachments/assets/5d18c53e-486d-49fe-b59f-3f1f042dfff2)
@@ -44,12 +36,48 @@
     - 서버가 ServletContext를 소멸시킬 때 호출됩니다.
     - 데이터베이스 연결 닫기, 임시 파일 삭제, 리소스 정리 등 애플리케이션 종료 작업을 처리할 수 있습니다.
 
+## ServletContextListener와 ServletContext의 관계
+- ServletContextListener는 ServletContext의 생명주기를 감지함.
+- contextInitialized()에서 ServletContext를 활용하여 전역 데이터를 저장할 수 있음.
+- contextDestroyed()에서 ServletContext를 활용하여 정리 작업 수행 가능.
+
+## ServletContextListener의 생명주기
+### 1. 웹 애플리케이션 시작
+- 서버가 웹 애플리케이션을 실행하면서 ServletContextListener를 감지
+- contextInitialized(ServletContextEvent event) 실행됨
+- 초기화 작업 수행
+    - DB 연결 풀 설정
+    - 전역 데이터 로드
+    - 로그 시스템 초기화
+### 2. 웹 애플리케이션 실행 중
+- 여러 서블릿과 JSP가 실행되며 ServletContext를 통해 공유 데이터를 관리할 수 있음.
+### 3. 웹 애플리케이션 종료
+- 서버가 웹 애플리케이션을 중지하거나 종료
+- contextDestroyed(ServletContextEvent event) 실행됨
+    - 정리 작업 수행
+    - DB 연결 해제
+    - 캐시 정리
+    - 로그 저장
+
+## ServletContextListener의 주요 메서드
+- contextInitialized(ServletContextEvent event)
+    - 애플리케이션이 시작될 때 실행됨. 초기화 작업 수행 (예: DB 연결, 설정 로드).
+- contextDestroyed(ServletContextEvent event)
+    - 애플리케이션이 종료될 때 실행됨. 자원 해제 및 정리 작업 수행 (예: DB 연결 해제, 캐시 정리).
+
+
 ### 질문
 #### ServletContextListener를 사용하여 데이터베이스 연결 풀을 초기화하려면 어떤 단계가 필요한가요?
 - 데이터베이스 연결 풀을 초기화하려면 먼저 ServletContextListener 인터페이스를 구현한 클래스를 작성하여 contextInitialized 메서드에서 연결 풀을 설정합니다. 그런 다음 생성된 연결 풀을 ServletContext에 속성으로 저장하여 애플리케이션 전역에서 사용할 수 있도록 합니다. 마지막으로, contextDestroyed 메서드에서 연결 풀을 종료하여 리소스를 반환합니다.
 
 #### ServletContextListener를 web.xml 대신 어노테이션으로 등록하려면 어떤 어노테이션을 사용해야 하나요?
 - ServletContextListener를 어노테이션으로 등록하려면 @WebListener 어노테이션을 사용해야 합니다. 이 어노테이션은 Servlet 3.0 이상에서 지원하며, 이를 통해 web.xml 파일을 수정하지 않고도 리스너 클래스를 자동으로 등록할 수 있습니다.
+
+#### ServletContext와 ServletConfig의 차이점은 무엇인가요?
+- ServletContext는 웹 애플리케이션 전역에서 공유되는 설정 정보와 자원을 관리하는 객체이며, 웹 애플리케이션 내 모든 서블릿과 JSP가 접근할 수 있습니다. 반면, ServletConfig는 특정 서블릿에 대한 설정 정보를 제공하는 객체로, 개별 서블릿마다 생성되며 해당 서블릿에서만 사용할 수 있습니다.
+
+#### ServletContextListener를 활용하면 어떤 장점이 있나요?
+- ServletContextListener를 활용하면 웹 애플리케이션이 시작될 때 필요한 리소스를 초기화하고, 종료될 때 정리하는 작업을 자동으로 수행할 수 있습니다. 예를 들어, 애플리케이션 시작 시 DB 연결 풀을 설정하거나 전역 캐시를 초기화할 수 있으며, 종료 시에는 DB 연결을 해제하거나 임시 파일을 정리할 수 있어 효율적인 리소스 관리가 가능합니다.
 
 ---
 
