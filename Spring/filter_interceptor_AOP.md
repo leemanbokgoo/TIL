@@ -1,11 +1,10 @@
 - 스프링에서 사용되는 Filter, Interceptor, AOP 세 가지 기능은 모두 무슨 행동을 하기전에 먼저 실행하거나, 실행한 후에 추가적인 행동을 할 때 사용되는 기능들이다.예를들어 로그인 관련(세션체크)처리, 권한체크, XSS(Cross site script)방어, pc와 모바일웹의 분기처리, 로그, 페이지 인코딩 변환 등이 있다.
 
 # Filter
-- HTTP 요청과 응답을 변경할 수 있는 재사용 가능한 코드이며, 서블릿 2.3 규약에 새롭게 추가되었다. 주로 스프링과 무관한 전역적인 요청을 처리한다. 
-- 필터는 객체의 형태로 존재하며 클라이언트에서 오는 요청(Request)과 최종자원(JSP, 서블릿, 기타 자원) 사이에 위치하여  클라이언트의 요청 정보를 알맞게 변경 할 수 있다. 최종 자원과 클라이언트로 가는 응답(response) 사이에 위치하여 최종 자원의 요청 결과를 알맞게 변경할 수도 있다. 
-- 필터는 클라이언트와 자원 사이의 위치하고있다. 실제 자원이 받는 요청 정보는 필터가 변경한 요청 정보가 되며, 또한 클라이언트가 보는 응답 정보는 필터가 변경한 응답 정보가 된다.
-- 클라이언트와 자원 사이에 한개의 필터만 존재할 수 있는 것은 아니며 여러개의 필터가 모여 하나의 필터체인을 형성하게 된다.
+- HTTP 요청과 응답을 변경할 수 있는 재사용 가능한 코드이며, 서블릿 2.3 규약에 새롭게 추가되었다. 
 - Filter에서는 주로 스프링과 무관한 전역적인 요청을 처리한다. Filter는 Spring에 들어오기 전에 실행되며 톰캣과 같은 웹 컨테이너(WAS)에서 처리를 해주게 된다. 그렇기에 Request에 대한 조작이 가능하다. Interceptor와 AOP는 모두 Request의 내용을 가지고 추가적인 작업을 해야 하는 입장이지만, Filter는 그 요청 자체를 조작할 수 있다.
+- 필터는 객체의 형태로 존재하며 클라이언트에서 오는 요청(Request)과 최종자원(JSP, 서블릿, 기타 자원) 사이에 위치하여  클라이언트의 요청 정보를 알맞게 변경 할 수 있다. 최종 자원과 클라이언트로 가는 응답(response) 사이에 위치하여 최종 자원의 요청 결과를 알맞게 변경할 수도 있다. 
+- 클라이언트와 자원 사이에 한개의 필터만 존재할 수 있는 것은 아니며 여러개의 필터가 모여 하나의 필터체인을 형성하게 된다.
 
 ## Filter의 기본 구조
 
@@ -185,41 +184,6 @@ public class MyInterceptor implements HandlerInterceptor {
 - AOP의 Advice와 HandlerIntercepter의 가장 큰 차이는 파라미터의 차이다. Advice의 경우 JoinPoint나 ProceedingJoinPoint 등을 활용해서 호출하지만, HandlerIntercepter는 FIiter와 유사하게 HttpServletRequest, HttpServletResponse를 파라미터로 사용한다. 
 - **Interceptor는 주로 Controller와 관련된 처리를 진행하는 반면, AOP는 세부적인 비즈니스 로직, 메소드와 관련된 처리를 진행하기 위해 사용된다.**
 
-## Filter, Interceptor, AOP의 흐름
-![image](https://github.com/user-attachments/assets/b3042972-66ae-4cee-a9c3-6f81f7b8eb0f)
-- Interceptor와 Filter는 Servlet 단위에서 실행된다. <> 반면 AOP는 메소드 앞에 Proxy패턴의 형태로 실행된다.ㆍ
-- 실행순서를 보면 Filter가 가장 밖에 있고 그안에 Interceptor, 그안에 AOP가 있는 형태이다.따라서 요청이 들어오면 Filter → Interceptor → AOP → Interceptor → Filter 순으로 거치게 된다.
-    - 1. 서버를 실행시켜 서블릿이 올라오는 동안에 init이 실행되고, 그 후 doFilter가 실행된다. 
-    - 2. 컨트롤러에 들어가기 전 preHandler가 실행된다
-    - 3. 컨트롤러에서 나와 postHandler, after Completion, doFilter 순으로 진행이 된다.
-    - 4. 서블릿 종료 시 destroy가 실행된다.
-
-### Filter, Interceptor, AOP 차이
-![image](https://github.com/user-attachments/assets/573e9382-eb41-4523-b974-19ebbb1bfc1f)
-
-## Filter(필터)
-- HTTP 요청과 응답을 거른뒤 정제하는 역할을 한다.서블릿 필터는 DispatcherServlet 이전에 실행이 되는데 필터가 동작하도록 지정된 자원의 앞단에서 요청내용을 변경하거나,  여러가지 체크를 수행할 수 있다.또한 자원의 처리가 끝난 후 응답내용에 대해서도 변경하는 처리를 할 수가 있다.보통 web.xml에 등록하고, 일반적으로 인코딩 변환 처리, XSS방어 등의 요청에 대한 처리로 사용된다.
-
-###  필터의 실행메서드ㆍ
-- init() - 필터 인스턴스 초기화ㆍ
-- doFilter() - 전/후 처리ㆍ
-- destroy() - 필터 인스턴스 종료
-
-## Interceptor(인터셉터)
-- 요청에 대한 작업 전/후로 가로챈다고 보면 된다.필터는 스프링 컨텍스트 외부에 존재하여 스프링과 무관한 자원에 대해 동작한다. 하지만 인터셉터는 스프링의 DistpatcherServlet이 컨트롤러를 호출하기 전, 후로 끼어들기 때문에 스프링 컨텍스트(Context, 영역) 내부에서 Controller(Handler)에 관한 요청과 응답에 대해 처리한다. 스프링의 모든 빈 객체에 접근할 수 있다.
-- 인터셉터는 여러 개를 사용할 수 있고 로그인 체크, 권한체크, 프로그램 실행시간 계산작업 로그 확인 등의 업무처리를 한다.
-
-### 인터셉터의 실행메서드
-- preHandler() - 컨트롤러 메서드가 실행되기 전
-- postHanler() - 컨트롤러 메서드 실행직 후 view페이지 렌더링 되기 전
-- afterCompletion() - view페이지가 렌더링 되고 난 후
-
-## AOP
-- 관점지향 프로그래밍(AOP)은 어떤 로직을 핵심적인 관점, 부가적인 관점으로 나누어서 보고 그 관점을 기준으로 각각 모듈화 (공통된 로직이나 기능을 하나의 단위로 묶는 것) 하는 프로그래밍 패러다임이다.
-- Spring AOP는 스프링 프레임워크에서 제공하는 기능으로, 애플리케이션에서 발생하는 특정 이벤트(메서드 호출, 예외 발생 등)에 대한 공통적인 기능(로깅, 트랜잭션 처리 등)을 적용할 수 있도록 해준다. 이를 통해 애플리케이션 전체에서 중복되는 코드를 줄이고, 유지/보수성을 향상시킬 수 있다.
-- Interceptor는 주로 Controller와 관련된 처리를 진행하는 반면, AOP는 세부적인 비즈니스 로직, 메소드와 관련된 처리를 진행하기 위해 사용된다. 주로 '로깅', '트랜잭션', '에러 처리'등 비즈니스단의 메서드에서 조금 더 세밀하게 조정하고 싶을 때 사용합니다.Interceptor나 Filter와는 달리 메소드 전후의 지점에 자유롭게 설정이 가능하다. Interceptor와 Filter는 주소로 대상을 구분해서 걸러내야하는 반면, AOP는 주소, 파라미터, 애노테이션 등 다양한 방법으로 대상을 지정할 수 있다.
-- AOP의 Advice와 HandlerInterceptor의 가장 큰 차이는 파라미터의 차이다.Advice의 경우 JoinPoint나 ProceedingJoinPoint 등을 활용해서 호출한다.반면 HandlerInterceptor는 Filter와 유사하게 HttpServletRequest, HttpServletResponse를 파라미터로 사용한다.
-
 ### AOP의 포인트컷
 - @Before: 대상 메서드의 수행 전
 - @After: 대상 메서드의 수행 후
@@ -235,6 +199,18 @@ public class MyInterceptor implements HandlerInterceptor {
     - Advice는 Pointcut에서 선택된 Join Point에서 수행될 로직이다.
     - Target은 Advice를 적용할 대상 객체이다.
 - Spring AOP는 자바의 프록시 패턴을 기반으로 만들어진다. 기존 클래스의 빈이 만들어질 때 프록시 객체를 자동으로 만들고 원본 객체 대신 프록시 객체를 빈으로 등록한다
+
+## Filter, Interceptor, AOP의 흐름
+![image](https://github.com/user-attachments/assets/b3042972-66ae-4cee-a9c3-6f81f7b8eb0f)
+- Interceptor와 Filter는 Servlet 단위에서 실행된다. <> 반면 AOP는 메소드 앞에 Proxy패턴의 형태로 실행된다.ㆍ
+- 실행순서를 보면 Filter가 가장 밖에 있고 그안에 Interceptor, 그안에 AOP가 있는 형태이다.따라서 요청이 들어오면 Filter → Interceptor → AOP → Interceptor → Filter 순으로 거치게 된다.
+    - 1. 서버를 실행시켜 서블릿이 올라오는 동안에 init이 실행되고, 그 후 doFilter가 실행된다. 
+    - 2. 컨트롤러에 들어가기 전 preHandler가 실행된다
+    - 3. 컨트롤러에서 나와 postHandler, after Completion, doFilter 순으로 진행이 된다.
+    - 4. 서블릿 종료 시 destroy가 실행된다.
+
+### Filter, Interceptor, AOP 차이
+![image](https://github.com/user-attachments/assets/573e9382-eb41-4523-b974-19ebbb1bfc1f)
 
 ### 질문
 #### 1: 필터, 인터셉터, AOP의 주요 차이점은 무엇인가요? 각각 어떤 상황에서 사용하는 것이 적합할까요?
