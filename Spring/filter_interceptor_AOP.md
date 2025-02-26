@@ -167,6 +167,30 @@ public class MyInterceptor implements HandlerInterceptor {
     - Controller로 넘겨주는 정보(데이터)의 가공
 - 인터셉터에서는 클라이언트의 요청과 관련되어 전역적으로 처리해야 하는 작업들을 처리할 수 있다. 대표적으로 세부적으로 적용해야 하는 인증이나 인가와 같이 클라이언트 요청과 관련된 작업 등이 있다. 예를 들어 특정 그룹의 사용자는 어떤 기능을 사용하지 못하는 경우가 있는데, 이러한 작업들은 컨트롤러로 넘어가기 전에 검사해야 하므로 인터셉터가 처리하기에 적합하다. 또한 인터셉터는 필터와 다르게 HttpServletRequest나 HttpServletResponse 등과 같은 객체를 제공받으므로 객체 자체를 조작할 수는 없다. 대신 해당 객체가 내부적으로 갖는 값은 조작할 수 있으므로 컨트롤러로 넘겨주기 위한 정보를 가공하기에 용이하다. 예를 들어 사용자의 ID를 기반으로 조회한 사용자 정보를 HttpServletRequest에 넣어줄 수 있다.
 - 그 외에도 우리는 다양한 목적으로 API 호출에 대한 정보들을 기록해야 할 수 있다. 이러한 경우에 HttpServletRequest나 HttpServletResponse를 제공해주는 인터셉터는 클라이언트의 IP나 요청 정보들을 포함해 기록하기에 용이하다.
+
+
+## Filter와 인터셉터의 차이 및 비교
+### 적용 범위 (실행 대상)
+- Filter
+    - 웹 애플리케이션의 가장 바깥 영역에서 모든 HTTP 요청 및 응답을 감싸는 역할을 합니다.
+    - 서블릿, JSP, 정적 리소스(HTML, CSS, JS, 이미지 등)까지 모든 요청을 가로챌 수 있습니다.
+    - DispatcherServlet이 실행되기 전후로 동작합니다.
+    - 웹 필터링, 보안 검사, 로깅, 인코딩 설정 등에 사용됩니다.
+- Interceptor:
+    - Spring MVC에서 제공하는 기능으로, Controller의 요청과 응답을 가로채는 역할을 합니다.
+    - DispatcherServlet 이후, Controller 실행 전후로 동작합니다.
+    - 정적 리소스 요청은 가로채지 않고, Spring MVC에서 관리하는 컨트롤러(URL 매핑된 핸들러) 요청만 가로챌 수 있습니다.
+    - 인증, 권한 체크, 요청 데이터 가공, 로깅 등에 사용됩니다.
+### 실행 시점
+- Filter
+    - DispatcherServlet이 실행되기 이전에 동작하며, 요청을 서블릿으로 전달할지 여부를 결정할 수 있습니다.
+    - doFilter() 메서드에서 request와 response를 조작 가능합니다.
+- Interceptor
+    - DispatcherServlet 이후 Controller 실행 전후로 동작하며, 컨트롤러에서 처리하는 요청만 가로챕니다.
+    - preHandle() (Controller 실행 전)
+    - postHandle() (Controller 실행 후, View가 렌더링되기 전)
+    - afterCompletion() (요청이 완전히 끝난 후)
+- Filter는 서블릿 수준에서 전역적으로 동작하며 모든 요청을 처리할 수 있음. Interceptor는 Spring MVC 내부에서 동작하며, 컨트롤러에서 처리하는 요청만 가로챌 수 있음.Filter는 웹 애플리케이션 전체를 대상으로, Interceptor는 Spring MVC 컨트롤러 요청만을 대상으로 한다는 것이 가장 큰 차이.
  
 ## 인터셉터(Interceptor)와 AOP의 비교
 
