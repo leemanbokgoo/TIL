@@ -97,7 +97,6 @@
 - CGLib은 클래스를 상속받아 Proxy를 생성해준다는 점, 마지막으로 CGLib이 가지고 있었던 3 가지 한계점이 모두 개선되어 Spring Boot에선 기본 Proxy 생성 방법으로 사용하고 있다.
 - 또한, JDK Dynamic Proxy는 Spring AOP의 AOP 기술의 근간이 되는 방식이기 때문에 Spring에서 사용되는 AOP의 기술들은 Proxy 메커니즘을 따르고 있다. 즉 CGLib이든 JDK Dynamic Proxy든 Proxy 메커니즘을 따른다.
 
-## 스프링 AOP와 AspectJ
 # Spring AOP VS AspectJ
 - Spring AOP와 AspectJ는 스프링 프레임워크에서 AOP를 구현하는데에 있어 사용할 수 있는 구현 방식중 하나
 ## Spring AOP
