@@ -52,7 +52,6 @@
 ### 팬텀 리드 해결 과정
 ![Image](https://github.com/user-attachments/assets/ab0462ff-0c98-4fe4-8cc4-668797b30dbc)
 - 위의 그림 갭락을 사용해서 팬텀 리드를 해결하는 방법을 표현한 그림이다. 
-    - 먼저 사용자 B가 트랜잭션 B에서 잠금 조회(SELECT FOR UPDATE)로 product_id가 4 이상인 상품을 조회한다.
     - 사용자 B가 트랜잭션 B에서 잠금 조회(SELECT FOR UPDATE)로 product_id가 4 이상인 상품을 조회
     - product_id 2~7 레코드에 Next Key Lock 설정
     - 사용자 A가 트랜잭션 A에서 product_id 6번으로 상품을 INSERT 시도
