@@ -21,7 +21,7 @@
 - JDK Dynamic Proxy는 Java의 리플렉션(Reflection) 기능을 활용하여 동적으로 인터페이스를 구현하는 프록시 객체를 생성하는데 java.lang.reflect.Proxy 클래스를 사용하여 인터페이스를 구현하는 익명 클래스(프록시 객체)를 런타임에 생성한다.
 
 ### JDK Dynamic Proxy를 활용한 프록시 생성
-
+```
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -50,7 +50,7 @@ return result;
 proxyInstance.placeOrder();
 }
 }
-
+```
 - jDK Dynamic Proxy가 리플렉션을 활용한다는 뜻은 프록시 객체는 원본 객체를 직접 상속하지 않고 대신 리플렉션(InvocationHandler + Method.invoke)을 사용하여 원본 객체의 메서드를 동적으로 호출한다는 뜻이다. 이 방식 덕분에 AOP(Aspect-Oriented Programming)에서 런타임에 메서드를 가로채고 부가기능(트랜잭션, 로깅 등)을 추가할 수 있다.
 
 
@@ -75,11 +75,11 @@ proxyInstance.placeOrder();
 ## JDK Dynamic Proxy vs CGLib
 - 두 방식의 차이는 인터페이스의 유무 로서, Spring은 프록시 타겟 객체에 인터페이스가 있다면 그 인터페이스를 구현한 JDK Dynamic Proxy 방식으로 객체를 생성하고 구현하지 않았다면 CGLIB 방식을 사용한다. 사용자가 어떻게 설정하느냐에 따라서 인터페이스를 구현했다 하더라도 CGLIB 방식을 강제하거나 AspectJ를 사용할 수 있다.
 - 하지만 JDK 동적 프록시 방식은 인터페이스를 반드시 생성해야한다는 단점과 구체 클래스로는 빈을 주입받을 수 없고 반드시 인터페이스로만 주입받야아한다는 단점 때문에 스프링은 CGLib 방식의 프록시를 강제하는 옵션을 제공하고 있는데, 이것이 바로 proxyTargetClass이며, 이 값을 true로 지정해주면 Spring은 인터페이스가 있더라도 무시하고 클래스 프록시를 만들게 된다.
-- SpringBoot에서는 CGLib 라이브러리가 갖는 단점들을 모두 해결하였고, Spring Boot 2.0부터부터는 proxyTargetClass 옵션의 기본값을 true로 사용하고 있다. 단점은 다음과 같다.
-- net.sf.cglib.proxy.Enhancer 의존성을 추가해야함. -> 3.2 ver. Spring Core 패키지에 포함
-- Default 생성자 필요함 -> 4.0 ver.부터 Objensis 라이브러리
-- 타겟의 생성자 두번 호출함 - > 4.0 ver.부터 Objensis 라이브러리
-- 오픈 소스였다. 신뢰하고 사용해도 될 정도로 검증할 시간이 필요했고 Spring에 내장되어있지 않아 별도로 의존성을 추가해야한다는 문제도 있었다. Spring 3.2버전부터 spring-core로 리패키징된 상태라 의존성을 추가할 필요가 없어짐.
+- SpringBoot에서는 CGLib 라이브러리가 갖는 단점들을 모두 해결하였고 Spring Boot 2.0부터는 proxyTargetClass 옵션의 기본값을 true로 사용하고 있다. 단점은 다음과 같다.
+    - net.sf.cglib.proxy.Enhancer 의존성을 추가해야함. -> 3.2 ver. Spring Core 패키지에 포함
+    - Default 생성자 필요함 -> 4.0 ver.부터 Objensis 라이브러리
+    - 타겟의 생성자 두번 호출함 - > 4.0 ver.부터 Objensis 라이브러리
+    - 오픈 소스였다. 신뢰하고 사용해도 될 정도로 검증할 시간이 필요했고 Spring에 내장되어있지 않아 별도로 의존성을 추가해야한다는 문제도 있었다. Spring 3.2버전부터 spring-core로 리패키징된 상태라 의존성을 추가할 필요가 없어짐.
 
 - Spring 4.3과 Spring boot 1.4부터 default로 CGLIB 프록시 사용
 
