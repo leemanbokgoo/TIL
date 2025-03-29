@@ -12,7 +12,7 @@
 - 오류의 이름이 Error로 끝나면 에러이고 Exception으로 끝나면 예외이다.
 - Error와 Exception으로 끝나는 오류의 가장 큰 차이는 프로그램 안에서 발생했는지 밖에서 발생했는 지 여부. 프로그램이 멈추어버리느냐 계속 실행할 수 있느냐의 차이
 - Error는 프로세스에 영향을 주고 Exception은 스레드에만 영향을 준다.
-- Error는 Throwable의 하위 클래스로써, 응용 프로그램의 심각한 문제를 나타내는 클르시앋.
+- Error는 Throwable의 하위 클래스로써, 응용 프로그램의 심각한 문제를 나타내는 클래스다.
 - 시스템에 비정상적인 상황이 생겼을떄 발생한다 (시스템레벨에서 발생)
 - 이러한 오류는 대부분 비정상적인 상태이다 "정상"조건이긴하지만 ThreadDeath 오류 대부분의 응용 프로그램이 이를 잡아내려고 하지않기때문에 Error의 하위 클래스이기도 하다.
 - Error의 서브 클래스를 throws 선언할 필요는 없다.
@@ -22,7 +22,7 @@
 - 예외는 개발자가 구현한 로직에서 발생한 실수나 사용자의 영향에 의해 발생한다. 이는 개발자가 미리 예측 하여 방지할 수 있기때문에 상황에 맞는 예외처리를 해야한다. 
 - Exception은 checked Exception이다.
 - Exception 클래스와 그 subclass는 응용프로그램이 catch 할 수 있는 조건을 나타내는 Throwable 형식이다.
-- Exception 클래스와 RuntimeException의 subclass가 아닌 서브 클래스는 checked exceptiondlek.
+- Exception 클래스와 RuntimeException의 subclass가 아닌 서브 클래스는 checked exception이다.
 - 직접 구현하여 개발자가 비즈니스 로직에 맞게 생성 가능하다.
 - 수많은 subclass가 있으므로 꼭 reference를 확인해보자
 
@@ -39,11 +39,9 @@
 - 이 클래스의 인스턴스(또는) 서브 클래스 중 하나)인 객체 만 Java Virtual Machine 에 의해 발생하거나 Java thow 문에 의해 발생 될 수 있다.
 - 예외의 compile-time-checking을 위해 RuntimeException 또는 Error의 서브 클래스가 아닌 Throwable 및 Throwable의 서브 클래스는 Checked 예외로 간주된다
 
-
 ![image](https://github.com/user-attachments/assets/1978822c-3d21-4d6a-a278-30d39e598b71)
 
-checked/ unchecked exception의 가장 큰 차이는 처리 방식이다.
-checked exception이 발생할 가능성이 있다면 throws로 상위로 처리를 위임하거나 try-catch문으로 처리해야한다.
+- checked/unchecked exception의 가장 큰 차이는 처리 방식이다. checked exception이 발생할 가능성이 있다면 throws로 상위로 처리를 위임하거나 try-catch문으로 처리해야한다.
 
 ### checked Exception
 - 반드시 예외처리를 해야한다(try-catch를 통해서)
@@ -54,7 +52,7 @@ checked exception이 발생할 가능성이 있다면 throws로 상위로 처리
 ### unchecked Exception
 - 명시적 예외 처리를 강제하지않는다
 - 실행단계에서 확인 가능하다
-- 예외 발생 시 크랜잭션 roll backgksek
+- 예외 발생 시 트랜잭션을 rollback한다.
 - RumtimeException의 하위 클래스 
 
 ### 질문
