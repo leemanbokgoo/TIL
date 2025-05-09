@@ -16,7 +16,6 @@
 ### 유연한 실행
 - spring.profiles.active 속성을 통해 실행 시 활성화할 프로파일을 지정할 수 있다.
 
-
 ### Profile 사용 방법
 
 ### application.properties에서 지정
